@@ -1,0 +1,101 @@
+District,HouseType,Bedrooms,Bathrooms,Amenity,EstimatedRent(RWF)
+Gasabo,Studio,1,2,Water Tank,380000
+Kicukiro,Bungalow,4,2,Balcony,600000
+Gasabo,Studio,1,2,Balcony,380000
+Rubavu,Apartment,4,3,Solar Power,610000
+Nyarugenge,Studio,2,1,Solar Power,430000
+Gasabo,Apartment,3,2,Water Tank,540000
+Kicukiro,Bungalow,5,3,Water Tank,730000
+Kicukiro,Villa,1,2,Parking,360000
+Bugesera,Villa,4,3,Solar Power,570000
+Rubavu,Villa,1,1,Solar Power,270000
+Gasabo,Villa,5,3,Water Tank,750000
+Gasabo,Bungalow,4,2,Water Tank,620000
+Gasabo,Villa,5,2,Solar Power,700000
+Gasabo,Studio,3,3,Solar Power,590000
+Kicukiro,Bungalow,5,3,Parking,730000
+Bugesera,Villa,1,3,Parking,330000
+Nyarugenge,Villa,3,1,Balcony,510000
+Bugesera,Villa,3,3,Parking,490000
+Nyarugenge,Villa,2,2,Balcony,480000
+Kicukiro,Apartment,2,3,Water Tank,490000
+Kicukiro,Studio,2,2,Balcony,440000
+Bugesera,Villa,2,1,Water Tank,310000
+Musanze,Studio,5,1,Water Tank,600000
+Bugesera,Apartment,1,2,Parking,280000
+Musanze,Villa,4,2,Water Tank,570000
+Kicukiro,Apartment,4,1,Balcony,550000
+Gasabo,Bungalow,3,1,Balcony,490000
+Musanze,Villa,4,2,Parking,570000
+Rubavu,Apartment,3,3,Parking,530000
+Rubavu,Villa,2,2,Balcony,400000
+Musanze,Bungalow,5,1,Parking,600000
+Gasabo,Studio,5,3,Water Tank,750000
+Kicukiro,Bungalow,5,3,Balcony,730000
+Gasabo,Apartment,4,2,Balcony,620000
+Kicukiro,Studio,1,1,Water Tank,310000
+Gasabo,Studio,3,1,Water Tank,490000
+Bugesera,Bungalow,5,1,Balcony,550000
+Nyarugenge,Studio,1,2,Solar Power,400000
+Bugesera,Bungalow,3,1,Parking,390000
+Rubavu,Studio,5,2,Solar Power,640000
+Rubavu,Studio,1,3,Balcony,370000
+Musanze,Villa,2,1,Water Tank,360000
+Gasabo,Bungalow,1,3,Parking,430000
+Nyarugenge,Villa,4,3,Balcony,690000
+Musanze,Bungalow,4,2,Solar Power,570000
+Musanze,Studio,4,2,Balcony,570000
+Bugesera,Villa,4,1,Balcony,470000
+Kicukiro,Bungalow,3,1,Solar Power,470000
+Rubavu,Studio,4,1,Solar Power,510000
+Gasabo,Apartment,3,1,Water Tank,490000
+Bugesera,Bungalow,5,3,Balcony,650000
+Kicukiro,Villa,3,3,Parking,570000
+Nyarugenge,Studio,5,2,Balcony,720000
+Musanze,Bungalow,5,2,Parking,650000
+Gasabo,Apartment,4,2,Water Tank,620000
+Rubavu,Bungalow,3,2,Water Tank,480000
+Rubavu,Apartment,1,1,Solar Power,270000
+Rubavu,Apartment,3,1,Solar Power,430000
+Gasabo,Villa,2,2,Parking,460000
+Rubavu,Villa,2,3,Parking,450000
+Musanze,Apartment,2,2,Solar Power,410000
+Nyarugenge,Villa,1,3,Parking,450000
+Gasabo,Studio,4,3,Water Tank,670000
+Gasabo,Studio,5,3,Balcony,750000
+Bugesera,Bungalow,5,1,Balcony,550000
+Nyarugenge,Bungalow,2,2,Balcony,480000
+Musanze,Apartment,3,3,Parking,540000
+Musanze,Villa,1,1,Balcony,280000
+Bugesera,Apartment,1,3,Solar Power,330000
+Musanze,Studio,1,3,Water Tank,380000
+Nyarugenge,Studio,5,2,Parking,720000
+Nyarugenge,Villa,1,1,Solar Power,350000
+Musanze,Bungalow,3,3,Balcony,540000
+Nyarugenge,Apartment,3,1,Balcony,510000
+Musanze,Studio,5,2,Parking,650000
+Kicukiro,Villa,4,3,Parking,650000
+Rubavu,Bungalow,1,1,Water Tank,270000
+Gasabo,Villa,1,2,Water Tank,380000
+Musanze,Apartment,1,1,Parking,280000
+Bugesera,Apartment,1,3,Water Tank,330000
+Rubavu,Apartment,2,1,Balcony,350000
+Nyarugenge,Villa,4,3,Water Tank,690000
+Kicukiro,Apartment,2,3,Balcony,490000
+Gasabo,Studio,1,1,Solar Power,330000
+Gasabo,Apartment,3,3,Parking,590000
+Gasabo,Studio,2,2,Water Tank,460000
+Musanze,Villa,4,3,Water Tank,620000
+Kicukiro,Apartment,3,1,Water Tank,470000
+Nyarugenge,Studio,2,2,Water Tank,480000
+Nyarugenge,Studio,5,3,Water Tank,770000
+Rubavu,Apartment,3,2,Solar Power,480000
+Rubavu,Villa,4,2,Balcony,560000
+Rubavu,Bungalow,5,3,Parking,690000
+Nyarugenge,Villa,2,2,Balcony,480000
+Musanze,Bungalow,4,3,Parking,620000
+Rubavu,Villa,4,3,Water Tank,610000
+Gasabo,Apartment,1,2,Water Tank,380000
+Kicukiro,Studio,4,2,Water Tank,600000
+Kicukiro,Apartment,2,2,Parking,440000
+Rubavu,Villa,2,2,Parking,400000

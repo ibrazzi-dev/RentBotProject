@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RentBot - Predict Rent</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #result {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+    #error {
+      margin-top: 10px;
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>🏠 RentBot - Rent Prediction</h2>
+  <form id="rentForm">
+    <label for="district">District:</label>
+    <select id="district" name="district" required>
+      <option value="Gasabo">Gasabo</option>
+      <option value="Kicukiro">Kicukiro</option>
+      <option value="Nyarugenge">Nyarugenge</option>
+      <option value="Rubavu">Rubavu</option>
+    </select>
+
+    <label for="houseType">House Type:</label>
+    <select id="houseType" name="houseType" required>
+      <option value="Studio">Studio</option>
+      <option value="Bungalow">Bungalow</option>
+      <option value="Apartment">Apartment</option>
+    </select>
+
+    <label for="bedrooms">Bedrooms:</label>
+    <input type="number" id="bedrooms" name="bedrooms" min="1" required />
+
+    <label for="bathrooms">Bathrooms:</label>
+    <input type="number" id="bathrooms" name="bathrooms" min="1" required />
+
+    <label for="amenity">Amenity:</label>
+    <select id="amenity" name="amenity" required>
+      <option value="Balcony">Balcony</option>
+      <option value="Water Tank">Water Tank</option>
+      <option value="Solar Power">Solar Power</option>
+    </select>
+
+    <button type="submit">Predict Rent</button>
+  </form>
+
+  <div id="result"></div>
+  <div id="error"></div>
+
+  <script>
+    const form = document.getElementById("rentForm");
+    const resultDiv = document.getElementById("result");
+    const errorDiv = document.getElementById("error");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      resultDiv.textContent = "";
+      errorDiv.textContent = "";
+
+      const data = {
+        District: document.getElementById("district").value,
+        HouseType: document.getElementById("houseType").value,
+        Bedrooms: parseInt(document.getElementById("bedrooms").value),
+        Bathrooms: parseInt(document.getElementById("bathrooms").value),
+        Amenity: document.getElementById("amenity").value,
+      };
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (result.predicted_rent) {
+          resultDiv.textContent = `Predicted Rent: ${result.predicted_rent.toFixed(0)} RWF`;
+        } else if (result.error) {
+          errorDiv.textContent = `Error: ${result.error}`;
+        } else {
+          errorDiv.textContent = "Unexpected response from API.";
+        }
+      } catch (err) {
+        errorDiv.textContent = `⚠️ API request failed: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
