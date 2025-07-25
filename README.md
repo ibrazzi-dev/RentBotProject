@@ -1,58 +1,40 @@
-# 🏠 RentBot – Your AI-powered Rent Prediction Assistant
+# RentBotProject 🏠
 
-RentBot is an AI-powered web application designed to predict rental prices for properties in Kigali, Rwanda. Inspired by platforms like Zillow, it leverages machine learning to provide **smart, data-driven rent estimates** based on district, property type, and amenities.
-
----
-
-## 🚀 Problem Statement
-
-Finding accurate rental prices in Rwanda is challenging due to a lack of centralized housing data. Many tenants overpay because they rely on brokers or guesswork.
-
-**RentBot solves this by:**
-
-- Predicting **fair rental prices** using ML.
-- Providing a **simple Streamlit web interface**.
-- Comparing **rent across districts** for better decision-making.
+AI-powered rental price predictor and dashboard built with **Streamlit** and **Scikit-learn**.  
+This project was developed for a hackathon challenge to help Rwandans easily predict fair rental prices and compare options.
 
 ---
 
-## 📊 Data Summary
-
-- **Dataset:** Synthetic & curated sample data from Kigali districts.
-- **Target Variable:** Rent price (RWF).
-- **Features Used:**
-  - `district` (Gasabo, Kicukiro, Nyarugenge)
-  - `house_type` (Apartment, Studio, Bungalow, etc.)
-  - `bedrooms`, `bathrooms`
-  - `amenities` (Balcony, Parking, Garden, etc.)
-- **Preprocessing:** Label encoding, feature scaling, and simple feature engineering.
-- **Model:** Linear Regression (exported to `rent_model.pkl` with `joblib`).
+## **Problem Statement**
+Finding affordable and fair rental housing in Kigali is challenging due to price variations and lack of transparency. **RentBot** predicts house rental prices based on location, house type, amenities, and other features, giving users an easy way to compare costs.
 
 ---
 
-## ✨ Features
-
-- **Hero Header & Modern UI** (Zillow-style).
-- **Interactive Form** – Select district, property type, bedrooms, bathrooms, and amenities.
-- **Instant AI Rent Prediction** – Returns price in RWF.
-- **📊 Bar Chart Comparison** – Compare across Nyarugenge, Gasabo, and Kicukiro.
-- **Lightweight model** – Easy to deploy and extend.
-
----
-
-## 🛠️ Tech Stack
-
-- **Frontend:** Streamlit
-- **Backend/ML:** Python, scikit-learn, pandas, numpy, joblib
-- **Visualization:** Streamlit’s native `st.bar_chart`
-- **Version Control:** Git + GitHub
+## **Data Summary**
+- **Dataset:** `rent_data_csv.csv`
+- **Features:**
+  - District (e.g., Gasabo, Nyarugenge)
+  - House Type (e.g., Apartment, Bungalow)
+  - Bedrooms, Bathrooms
+  - Amenities (e.g., Garden, Parking)
+  - Price (target variable)
+- Data cleaned, encoded, and normalized using **scikit-learn** pipelines.
 
 ---
 
-## 💻 How to Run Locally
+## **Key Features**
+- **Hero Section** with logo and tagline.
+- **Interactive Form** (District, House Type, Bedrooms, Bathrooms, Amenities).
+- **AI Price Prediction** using a trained regression model (`rent_model.pkl`).
+- **Bar Chart Comparison** of predicted price vs average market price (via `st.bar_chart`).
+- **Clean UI** with a faded Kigali city background image.
+- **Hackathon Ready** – Fast, user-friendly, and impactful.
 
-### 1) Clone the Repository
+---
 
+## **How to Run**
+
+### **1. Clone the repo**
 ```bash
 git clone https://github.com/ibrazzi-dev/RentBotProject.git
 cd RentBotProject
