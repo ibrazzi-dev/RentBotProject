@@ -1,0 +1,12 @@
+district,house_type,bedrooms,bathrooms,amenity,price
+Nyarugenge,Apartment,2,1,Balcony,300000
+Gasabo,Bungalow,3,2,Parking,450000
+Kicukiro,Studio,1,1,Wi-Fi,200000
+Gasabo,Apartment,2,2,Garden,400000
+Nyarugenge,Villa,4,3,Parking,800000
+Gasabo,Villa,3,3,Wi-Fi,700000
+Kicukiro,Apartment,2,1,Balcony,320000
+Nyarugenge,Bungalow,3,2,Garden,480000
+Gasabo,Studio,1,1,Parking,210000
+Kicukiro,Villa,4,3,Wi-Fi,750000
+Nyarugenge,Apartment,1,1,Balcony,250000

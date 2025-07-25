@@ -1,0 +1,16 @@
+
+---
+
+## 2) ⬆️ Push to GitHub — exact commands
+
+Open **PowerShell** in your project folder and run:
+
+```powershell
+cd C:\Users\PC\RentBotProject
+
+# (Optional) regenerate requirements to be 100% sure it's clean
+pip freeze > requirements.txt
+
+git add README.md requirements.txt app.py train_dummy_model.py screenshots/*
+git commit -m "📝 Final hackathon README + screenshots + polished Streamlit UI"
+git push origin main

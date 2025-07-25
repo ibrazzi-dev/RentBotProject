@@ -1,0 +1,55 @@
+
+---
+
+# **2. PowerPoint Slide Outline (20-Min Build)**
+
+### **Slide 1 – Title**
+- RentBot: AI-Powered Rental Price Predictor
+- Team Ibrazzi – Hackathon 2025
+- Tagline: *"Smarter Housing for Kigali"*
+
+### **Slide 2 – Problem**
+- High rental prices, lack of transparency
+- No easy way to compare fair rents
+- Need for **data-driven predictions**
+
+### **Slide 3 – Data & Exploration**
+- Dataset: 3,700+ entries (districts, house type, amenities)
+- Cleaned & preprocessed using Pandas + Scikit-learn
+- Encoded categorical variables and scaled numerical features
+
+### **Slide 4 – Model**
+- Regression (Linear Regression / Random Forest)
+- Metrics: MAE, RMSE, R²
+- `rent_model.pkl` deployed in Streamlit
+
+### **Slide 5 – Features**
+- Interactive form (district, house type, bedrooms, etc.)
+- AI price predictions
+- Bar chart comparison
+- Kigali city background UI
+
+### **Slide 6 – Responsible AI**
+- Removed bias-prone fields
+- Explainable feature weights
+- User-friendly and transparent predictions
+
+### **Slide 7 – Impact & Future**
+- Helps citizens find fair prices
+- Future: mobile app, real-time rent database, government collaboration
+
+### **Slide 8 – Demo Link**
+- Screenshot previews (Hero + Chart)
+- GitHub Repo link
+- Live demo on local host
+
+### **Slide 9 – Team & Closing**
+- Team Ibrazzi
+- "Building Rwanda's digital future!"
+
+---
+
+## **Next Steps (Immediate Action Plan)**
+1. **Add this README.md to repo and push it:**
+   ```powershell
+   git add README.md && git commit -m "Polished final README" && git push origin main
