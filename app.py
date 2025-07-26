@@ -1,101 +1,126 @@
+# app.py  — clean, judge-friendly UI
 import streamlit as st
 import pandas as pd
 import joblib
+from pathlib import Path
 
-st.set_page_config(page_title="RentBot", layout="wide")
+st.set_page_config(page_title="RentBot – Kigali Rent Predictor", layout="wide")
 
-# --- Styling (background hero) ---
+# ---------- Minimal styling ----------
 st.markdown("""
 <style>
-[data-testid="stAppViewContainer"] {
-    background-image: url("https://images.unsplash.com/photo-1508057198894-247b23fe5ade?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80");
-    background-size: cover;
-}
-.hero {
-    background: rgba(0,0,0,0.6);
-    padding: 24px 32px;
-    border-radius: 12px;
-    color: white;
-    margin-bottom: 24px;
-    text-align: center;
-}
+/* remove default top padding */
+.block-container {padding-top: 1rem;}
+/* simple white card blocks */
 .block {
-    background: rgba(255,255,255,0.9);
-    padding: 20px;
+    background: rgba(255,255,255,0.96);
+    padding: 20px 22px;
     border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08);
+    margin-bottom: 18px;
+}
+h1, h2, h3 {
+    margin-top: 0.2rem;
+}
+.note {
+    font-size: 0.9rem; 
+    color: #666;
 }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<div class="hero">
-    <h1>🏠 RentBot</h1>
-    <h3>AI-powered rent prediction for Kigali</h3>
-    <p>Enter your property details and get a fair rent estimate instantly.</p>
-</div>
-""", unsafe_allow_html=True)
+# ---------- Header ----------
+st.markdown("<div class='block'>", unsafe_allow_html=True)
+st.title("RentBot")
+st.write("AI-powered rent prediction for Kigali (Gasabo, Kicukiro, Nyarugenge).")
+st.markdown("</div>", unsafe_allow_html=True)
 
-# --- Load model + mappings ---
+# ---------- Load assets ----------
+model_path = Path("rent_model.pkl")
+map_path = Path("mappings.pkl")
+
+if not (model_path.exists() and map_path.exists()):
+    st.error("Model files not found. Please run `python train_dummy_model.py` first.")
+    st.stop()
+
 try:
-    model = joblib.load("rent_model.pkl")
-    mappings = joblib.load("mappings.pkl")
-    st.success("✅ Model & mappings loaded")
+    model = joblib.load(model_path)
+    mappings = joblib.load(map_path)
 except Exception as e:
-    st.error(f"❌ Could not load model/mappings: {e}")
+    st.error(f"Could not load model/mappings: {e}")
     st.stop()
 
 district_map = mappings["district"]
 house_type_map = mappings["house_type"]
 amenity_map = mappings["amenity"]
 
-# --- Reverse maps (for selectboxes) ---
-districts = list(district_map.keys())
-house_types = list(house_type_map.keys())
-amenities_list = list(amenity_map.keys())
+districts = ["Select District"] + list(district_map.keys())
+house_types = ["Select House Type"] + list(house_type_map.keys())
+amenities = ["Select Amenity"] + list(amenity_map.keys())
 
-# --- Form ---
+# ---------- Form ----------
 st.markdown("<div class='block'>", unsafe_allow_html=True)
-st.subheader("🔍 Predict Rent")
+st.header("Enter Property Details")
 
-col1, col2 = st.columns(2)
+with st.form("rent_form"):
+    col1, col2 = st.columns(2)
 
-with col1:
-    district = st.selectbox("District", districts)
-    house_type = st.selectbox("House Type", house_types)
+    with col1:
+        district = st.selectbox("District", districts, index=0)
+        house_type = st.selectbox("House Type", house_types, index=0)
 
-with col2:
-    bedrooms = st.number_input("Bedrooms", min_value=1, max_value=10, value=2, step=1)
-    bathrooms = st.number_input("Bathrooms", min_value=1, max_value=5, value=1, step=1)
+    with col2:
+        bedrooms = st.number_input("Bedrooms", min_value=1, max_value=10, value=None, step=1, placeholder="e.g. 2")
+        bathrooms = st.number_input("Bathrooms", min_value=1, max_value=5, value=None, step=1, placeholder="e.g. 1")
 
-amenities_selected = st.multiselect("Amenities", amenities_list)
+    amenity = st.selectbox("Main Amenity", amenities, index=0)
 
-if st.button("💡 Predict"):
-    try:
-        district_code = district_map[district]
-        house_type_code = house_type_map[house_type]
-
-        # For now just count amenities, or you can encode the first selected one
-        amenity_code = amenity_map[amenities_selected[0]] if amenities_selected else 0
-
-        X = pd.DataFrame([[
-            district_code,
-            house_type_code,
-            int(bedrooms),
-            int(bathrooms),
-            int(amenity_code)
-        ]], columns=["district_code", "house_type_code", "bedrooms", "bathrooms", "amenity_code"])
-
-        y_pred = model.predict(X)[0]
-        st.success(f"🎯 Estimated Rent: **{y_pred:,.0f} RWF**")
-    except Exception as e:
-        st.error(f"Prediction error: {e}")
+    submitted = st.form_submit_button("Predict Rent")
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-# --- Comparison chart (dummy values to display something nice) ---
-st.subheader("📊 Rent Comparison by District (example)")
-comparison_df = pd.DataFrame({
-    "District": ["Nyarugenge", "Gasabo", "Kicukiro"],
-    "Average Rent (RWF)": [500000, 450000, 400000]
-}).set_index("District")
-st.bar_chart(comparison_df)
+# ---------- Predict ----------
+if submitted:
+    errors = []
+    if district == "Select District":
+        errors.append("Please choose a district.")
+    if house_type == "Select House Type":
+        errors.append("Please choose a house type.")
+    if amenity == "Select Amenity":
+        errors.append("Please choose an amenity.")
+    if bedrooms is None:
+        errors.append("Please provide bedrooms.")
+    if bathrooms is None:
+        errors.append("Please provide bathrooms.")
+
+    if errors:
+        for e in errors:
+            st.warning(e)
+    else:
+        try:
+            row = pd.DataFrame([[
+                district_map[district],
+                house_type_map[house_type],
+                int(bedrooms),
+                int(bathrooms),
+                amenity_map[amenity]
+            ]], columns=["district_code", "house_type_code", "bedrooms", "bathrooms", "amenity_code"])
+
+            pred = model.predict(row)[0]
+            st.success(f"Estimated Monthly Rent: **{pred:,.0f} RWF**")
+
+            # ---- Show comparison chart ONLY after prediction
+            st.markdown("<div class='block'>", unsafe_allow_html=True)
+            st.subheader("Average Rent by District (Example)")
+            comp_df = pd.DataFrame({
+                "District": ["Gasabo", "Kicukiro", "Nyarugenge"],
+                "Average Rent (RWF)": [450000, 400000, 500000]
+            }).set_index("District")
+            st.bar_chart(comp_df)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        except Exception as e:
+            st.error(f"Prediction error: {e}")
+
+# Footer
+st.markdown("<p class='note'>Built for the Rwanda AI & ML Hackathon — RentBot by Ibrazzi.</p>", unsafe_allow_html=True)
