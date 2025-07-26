@@ -1,23 +1,32 @@
-# Responsible AI Guidelines for RentBot
 
-We designed **RentBot** with responsible AI principles:
+---
 
-## Transparency
-- Clear indication that predictions are based on historical sample data.
-- Simple, explainable linear model to avoid "black box" behavior.
+# **📄 responsible_ai.md**
+```markdown
+# 🤖 Responsible AI – RentBot
 
-## Bias Mitigation
-- Dataset includes diverse property types from multiple districts to reduce bias.
-- No demographic or sensitive data used.
+We are committed to **responsible and ethical AI** development.  
 
-## Privacy
-- No personal user data is stored or logged.
-- Users only input property attributes (district, type, bedrooms, etc.).
+### **1. Fairness**
+- Our dataset is a **balanced sample of Kigali districts**.
+- No sensitive personal data is used.
+- Predictions are **estimates** and **not absolute values**.
 
-## Reliability
-- Model predictions are approximate and include disclaimers in the README.
-- Tested with edge cases to avoid invalid outputs.
+### **2. Transparency**
+- All model code is open-source in this repository.
+- A clear explanation of features and data is provided in the README.
 
-## Future Improvements
-- Regular dataset updates to improve fairness.
-- Integration with live housing data while maintaining ethical standards.
+### **3. Privacy**
+- We **do not collect user data**.
+- The app only processes input values for predictions in memory.
+
+### **4. Reliability**
+- The model is lightweight but **can be improved with more data**.
+- Future versions will include confidence intervals and better metrics.
+
+---
+
+**Note:** This project is a **hackathon prototype** intended for demonstration only. Real-world deployment would require:
+- Larger datasets
+- Continuous model monitoring
+- Stakeholder feedback to avoid bias

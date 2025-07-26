@@ -1,40 +1,39 @@
-# RentBotProject 🏠
+#  RentBot – Smart Rent Price Prediction
 
-AI-powered rental price predictor and dashboard built with **Streamlit** and **Scikit-learn**.  
-This project was developed for a hackathon challenge to help Rwandans easily predict fair rental prices and compare options.
-
----
-
-## **Problem Statement**
-Finding affordable and fair rental housing in Kigali is challenging due to price variations and lack of transparency. **RentBot** predicts house rental prices based on location, house type, amenities, and other features, giving users an easy way to compare costs.
+RentBot is a **Streamlit-powered AI web app** that predicts rental prices based on property features such as location, size, and number of rooms.  
+It was built for the **Hackathon Challenge** to showcase **AI + Real Estate** potential for Rwanda.
 
 ---
 
-## **Data Summary**
-- **Dataset:** `rent_data_csv.csv`
-- **Features:**
-  - District (e.g., Gasabo, Nyarugenge)
-  - House Type (e.g., Apartment, Bungalow)
-  - Bedrooms, Bathrooms
-  - Amenities (e.g., Garden, Parking)
-  - Price (target variable)
-- Data cleaned, encoded, and normalized using **scikit-learn** pipelines.
+## ** Problem Statement**
+Finding affordable and fair rental prices in Kigali and other districts is a major challenge for both tenants and property owners.  
+RentBot uses machine learning to **predict rental prices** based on historical data, providing quick insights and transparency.
 
 ---
 
-## **Key Features**
-- **Hero Section** with logo and tagline.
-- **Interactive Form** (District, House Type, Bedrooms, Bathrooms, Amenities).
-- **AI Price Prediction** using a trained regression model (`rent_model.pkl`).
-- **Bar Chart Comparison** of predicted price vs average market price (via `st.bar_chart`).
-- **Clean UI** with a faded Kigali city background image.
-- **Hackathon Ready** – Fast, user-friendly, and impactful.
+## ** Dataset Overview**
+We use a **sample dataset (`sample_houses.csv`)** with 10+ entries containing:
+- **District** (Nyarugenge, Gasabo, Kicukiro)
+- **Bedrooms & Bathrooms**
+- **House Size (m²)**
+- **Base Rent Price (Frw)**
+
+The dataset is used to train a **Linear Regression model** saved as `rent_model.pkl`.  
+Encoders for district mapping are stored in `mappings.pkl`.
 
 ---
 
-## **How to Run**
+## ** Features of RentBot**
+- **Predict Rental Prices** instantly.
+- **Interactive Streamlit UI** with input sliders & select boxes.
+- **Data Visualizations** (Price trends).
+- **Simple ML Pipeline** (Scikit-learn + Joblib).
+- **Hackathon-ready presentation** with screenshots.
 
-### **1. Clone the repo**
-```bash
-git clone https://github.com/ibrazzi-dev/RentBotProject.git
-cd RentBotProject
+---
+
+## ** How to Run Locally**
+1. **Clone this repo**:
+   ```bash
+   git clone https://github.com/ibrazzi-dev/RentBotProject.git
+   cd RentBotProject
