@@ -1,136 +1,225 @@
-# app.py — final, stable UI (background fixed + bar chart after prediction)
-
-import streamlit as st
-import pandas as pd
-import joblib
+# app.py  — FINAL, SAFE, HACKATHON VERSION
+import os
 from pathlib import Path
-import base64
+import numpy as np
+import pandas as pd
+import streamlit as st
 
-st.set_page_config(page_title="RentBot – Kigali Rent Predictor", layout="wide")
-
-# ---------- small helper: embed local bg.jpg if it exists ----------
-def set_background():
-    bg_path = Path("bg.jpg")
-    if bg_path.exists():
-        with open(bg_path, "rb") as f:
-            b64 = base64.b64encode(f.read()).decode()
-        css = f"""
-        <style>
-        [data-testid="stAppViewContainer"] {{
-            background: url("data:image/jpg;base64,{b64}") no-repeat center center fixed;
-            background-size: cover;
-        }}
-        [data-testid="stHeader"] {{
-            background: rgba(0,0,0,0);
-        }}
-        .card {{
-            background: rgba(255,255,255,0.92);
-            padding: 20px 24px;
-            border-radius: 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,.08);
-            margin-bottom: 18px;
-        }}
-        </style>
-        """
-    else:
-        # fallback gradient if bg.jpg not found
-        css = """
-        <style>
-        [data-testid="stAppViewContainer"] {
-            background: linear-gradient(135deg, #f2f6ff 0%, #ffffff 100%);
-        }
-        [data-testid="stHeader"] { background: rgba(0,0,0,0); }
-        .card {
-            background: rgba(255,255,255,0.96);
-            padding: 20px 24px;
-            border-radius: 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,.08);
-            margin-bottom: 18px;
-        }
-        </style>
-        """
-    st.markdown(css, unsafe_allow_html=True)
-
-set_background()
-
-# ---------- load model & mappings (robust to amenity key) ----------
+# Optional (only if you really need it)
 try:
-    model = joblib.load("rent_model.pkl")
-    mappings = joblib.load("mappings.pkl")
-except Exception as e:
-    st.error(f"Could not load model/mappings: {e}")
-    st.stop()
+    import joblib
+except Exception:
+    joblib = None
 
-amenity_key = "amenity" if "amenity" in mappings else ("main_amenity" if "main_amenity" in mappings else None)
-if amenity_key is None:
-    st.error("Amenity mapping not found in mappings.pkl (expected 'amenity' or 'main_amenity'). Re-run train_dummy_model.py.")
-    st.stop()
+# -----------------------------
+# ---------- CONFIG -----------
+# -----------------------------
+st.set_page_config(
+    page_title="Smart RentBot",
+    page_icon="🏠",
+    layout="centered"
+)
 
-district_map = mappings["district"]
-house_type_map = mappings["house_type"]
-amenity_map = mappings[amenity_key]
+# Light CSS + optional background (won’t crash if file missing)
+BG_IMG = "screenshots/bg.jpg"  # change if you have another name/path
+css = f"""
+<style>
+    .stApp {{
+        background: {'url("'+BG_IMG+'") no-repeat center/cover fixed' if Path(BG_IMG).exists() else '#0f172a'};
+        color: white;
+    }}
+    /* White cards */
+    .stMarkdown, .stSelectbox, .stNumberInput, .stButton>button {{
+        color: black !important;
+    }}
+    .hero {{
+        padding: 2rem 1rem;
+        background: rgba(0,0,0,0.55);
+        border-radius: 14px;
+        text-align: center;
+        margin-bottom: 1.2rem;
+    }}
+    .footer-note {{
+        opacity:.6; font-size:0.8rem; margin-top:2rem;
+    }}
+</style>
+"""
+st.markdown(css, unsafe_allow_html=True)
 
-districts = ["-- Select district --"] + list(district_map.keys())
-house_types = ["-- Select house type --"] + list(house_type_map.keys())
-amenities = ["-- Select amenity --"] + list(amenity_map.keys())
+# -----------------------------
+# ------- SAFE LOADERS --------
+# -----------------------------
+MODEL_PATH = Path("rent_model.pkl")
+MAP_PATH   = Path("mappings.pkl")
+DATA_PATH  = Path("sample_houses.csv")
 
-# ---------- UI ----------
-st.markdown("<div class='card'>", unsafe_allow_html=True)
-st.title("RentBot")
-st.write("AI-powered rent prediction for Kigali (Gasabo, Kicukiro, Nyarugenge).")
-st.markdown("</div>", unsafe_allow_html=True)
+model = None
+mappings = None
 
-st.markdown("<div class='card'>", unsafe_allow_html=True)
-st.subheader("Enter property details")
+def safe_load_assets():
+    global model, mappings
+    ok = True
+    # model
+    if joblib and MODEL_PATH.exists():
+        try:
+            model = joblib.load(MODEL_PATH)
+        except Exception as e:
+            st.warning(f"⚠️ Could not load ML model ({e}). Falling back to baseline rule.")
+            ok = False
+    else:
+        ok = False
+
+    # mappings
+    if MAP_PATH.exists():
+        try:
+            mappings = joblib.load(MAP_PATH) if joblib else None
+        except Exception as e:
+            st.warning(f"⚠️ Could not load mappings ({e}). Falling back to defaults.")
+            ok = False
+    else:
+        ok = False
+
+    # If anything failed -> set defaults
+    if not ok or mappings is None:
+        default_mappings = {
+            "district": {"--Select--": -1, "Gasabo": 0, "Kicukiro": 1, "Nyarugenge": 2},
+            "house_type": {"--Select--": -1, "Apartment": 0, "Bungalow": 1, "Villa": 2},
+            "main_amenity": {"--Select--": -1, "Balcony": 0, "Parking": 1, "Garden": 2},
+        }
+        return False, default_mappings
+    return True, mappings
+
+model_ok, mappings = safe_load_assets()
+
+# -----------------------------
+# ---------- DATA -------------
+# -----------------------------
+def load_avg_rents():
+    """Return a Series with average rents by district."""
+    if DATA_PATH.exists():
+        try:
+            df = pd.read_csv(DATA_PATH)
+            if {"district","rent_rwf"}.issubset(df.columns):
+                return df.groupby("district")["rent_rwf"].mean().round()
+        except Exception:
+            pass
+    # fallback fake numbers
+    return pd.Series(
+        {"Gasabo": 450000, "Kicukiro": 420000, "Nyarugenge": 480000},
+        name="avg_rent_rwf"
+    )
+
+avg_rent_by_district = load_avg_rents()
+
+# -----------------------------
+# ------- HERO SECTION --------
+# -----------------------------
+st.markdown(
+    """
+<div class="hero">
+    <h1>🏠 Smart RentBot</h1>
+    <p>AI-powered rent prediction for Kigali (Gasabo, Kicukiro, Nyarugenge).</p>
+</div>
+""",
+    unsafe_allow_html=True
+)
+
+# Let user know if we’re on fallback
+if not model_ok:
+    st.info("ℹ️ Running in **fallback (rule-based) mode** because the trained model/mappings were not found or failed to load.")
+
+# -----------------------------
+# ---------- FORM -------------
+# -----------------------------
+st.subheader("🔍 Enter property details")
 
 col1, col2 = st.columns(2)
 with col1:
-    district = st.selectbox("District", districts, index=0)
-    house_type = st.selectbox("House Type", house_types, index=0)
+    district = st.selectbox(
+        "District",
+        ["--Select--"] + [d for d in mappings["district"].keys() if d != "--Select--"]
+    )
+    bedrooms = st.number_input("Bedrooms", min_value=0, max_value=10, value=None, step=1, placeholder="e.g., 2")
 with col2:
-    bedrooms = st.number_input("Bedrooms", min_value=1, max_value=10, value=1, step=1)
-    bathrooms = st.number_input("Bathrooms", min_value=1, max_value=5, value=1, step=1)
+    house_type = st.selectbox(
+        "House Type",
+        ["--Select--"] + [h for h in mappings["house_type"].keys() if h != "--Select--"]
+    )
+    bathrooms = st.number_input("Bathrooms", min_value=0, max_value=10, value=None, step=1, placeholder="e.g., 1")
 
-amenity = st.selectbox("Main Amenity", amenities, index=0)
+main_amenity = st.selectbox(
+    "Main Amenity",
+    ["--Select--"] + [a for a in mappings["main_amenity"].keys() if a != "--Select--"]
+)
 
-predict = st.button("Predict rent")
-st.markdown("</div>", unsafe_allow_html=True)
+predict_btn = st.button("💡 Predict Rent", use_container_width=True)
 
-# ---------- Predict & show chart AFTER ----------
-if predict:
-    errors = []
-    if district.startswith("--"):
-        errors.append("Please select a District.")
-    if house_type.startswith("--"):
-        errors.append("Please select a House Type.")
-    if amenity.startswith("--"):
-        errors.append("Please select an Amenity.")
+# -----------------------------
+# ----- PREDICTION LOGIC ------
+# -----------------------------
+def fallback_predict(district, house_type, bedrooms, bathrooms, main_amenity):
+    """Very simple rule engine if ML model not loaded."""
+    base = 300_000
+    if district == "Nyarugenge": base += 80_000
+    if district == "Gasabo":     base += 40_000
+    if district == "Kicukiro":   base += 20_000
 
-    if errors:
-        for e in errors:
-            st.warning(e)
-    else:
-        X = [[
-            district_map[district],
-            house_type_map[house_type],
-            int(bedrooms),
-            int(bathrooms),
-            amenity_map[amenity]
-        ]]
-        try:
-            y_pred = model.predict(X)[0]
-            st.success(f"Estimated Monthly Rent: **{y_pred:,.0f} RWF**")
-            st.session_state["show_chart"] = True
-        except Exception as e:
-            st.error(f"Prediction error: {e}")
+    if house_type == "Villa":     base += 120_000
+    if house_type == "Bungalow":  base += 60_000
+    if house_type == "Apartment": base += 30_000
 
-# show bar chart only after prediction
-if st.session_state.get("show_chart", False):
-    st.markdown("<div class='card'>", unsafe_allow_html=True)
-    st.subheader("Average Rent by District (Example)")
-    comp = pd.DataFrame({
-        "District": ["Gasabo", "Kicukiro", "Nyarugenge"],
-        "Average Rent (RWF)": [450000, 400000, 500000]
-    }).set_index("District")
-    st.bar_chart(comp)
-    st.markdown("</div>", unsafe_allow_html=True)
+    base += (bedrooms or 0) * 40_000
+    base += (bathrooms or 0) * 30_000
+
+    if main_amenity == "Parking": base += 20_000
+    if main_amenity == "Garden":  base += 30_000
+    if main_amenity == "Balcony": base += 10_000
+    return float(base)
+
+def ml_predict(district, house_type, bedrooms, bathrooms, main_amenity):
+    # encode
+    d  = mappings["district"].get(district, -1)
+    ht = mappings["house_type"].get(house_type, -1)
+    am = mappings["main_amenity"].get(main_amenity, -1)
+    # basic guard
+    if -1 in [d, ht, am] or None in [bedrooms, bathrooms]:
+        raise ValueError("Please select all fields correctly before predicting.")
+    X = np.array([[d, ht, bedrooms, bathrooms, am]])
+    return float(model.predict(X)[0])
+
+if predict_btn:
+    try:
+        # validate first
+        if (
+            district == "--Select--"
+            or house_type == "--Select--"
+            or main_amenity == "--Select--"
+            or bedrooms is None
+            or bathrooms is None
+        ):
+            st.warning("⚠️ Please fill **all** fields before predicting.")
+        else:
+            if model_ok and model is not None:
+                price = ml_predict(district, house_type, bedrooms, bathrooms, main_amenity)
+            else:
+                price = fallback_predict(district, house_type, bedrooms, bathrooms, main_amenity)
+
+            st.success(f"💰 **Predicted Rent:** {int(price):,} RWF")
+
+            # Show a comparison chart (district avg + current prediction)
+            compare = avg_rent_by_district.copy()
+            # Add current district predicted
+            compare.loc[f"Your ({district})"] = price
+            st.subheader("📊 Comparison: Your prediction vs. Avg rents")
+            st.bar_chart(compare)
+    except Exception as e:
+        st.error(f"❌ Prediction error: {e}")
+
+st.markdown(
+    """
+<div class="footer-note">
+    Made for DTP Hackathon • Kigali, Rwanda 🇷🇼
+</div>
+""",
+    unsafe_allow_html=True
+)
